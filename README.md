@@ -9,7 +9,7 @@
 # 简介
 这是一个使用 [QQAPI](https://github.com/AnzhiZhang/MCDReforgedPlugins/tree/master/src/qq_api) 的 QQ 机器人插件，可以说相当于重写了 [QQChat](https://github.com/AnzhiZhang/MCDReforgedPlugins/tree/master/src/qq_chat)，砍掉了很多个人认为没必要的功能，优化了代码结构。
 
-同时，它还支持通过**插件套插件**的方式，简单地扩展机器人，添加属于你的命令！
+同时，它还支持通过**API**的方式，简单地扩展机器人，添加属于你的命令！
 
 目前相比 QQChat 新增功能：
 - [x] 支持通过 `/bot-ban` `/bot-pardon` 拒绝响应某用户
@@ -38,15 +38,46 @@
 ## 通过源代码
 在 `plugins` 下执行 `git clone https://github.com/SALTWOOD/SaltyQQChat` 或者 `git clone git@github.com:SALTWOOD/SaltyQQChat`，然后重载插件。
 
-# 插件套插件
-这是这个插件最有意思的功能之一，有意思到我还没琢磨出来
-简单来说就是通过一个单文件插件，获取到 SaltyQQChat 的插件实例，然后
+# API
+这是这个插件最有意思的功能之一，可以通过添加其他 MCDR 插件的方式为这个插件添加自定义命令。
+这里展出一个单文件插件的代码作为示例：
 ```Python
+from mcdreforged.api.types import PluginServerInterface
+from typing import Callable, List
 import re
 
-commands.add_command(re.compile(r'/你的命令 <你的参数>'), [int, str, float], handler)
+reply: Callable
+PLUGIN_METADATA = {
+    'id': 'sqc_extension',
+    'version': '1.0.0',
+    'name': 'SQC extension plugin',
+    'description': 'SaltyQQChat\'s extension plugin',
+    'author': 'NONE',
+    'link': 'https://github.com',
+    'dependencies': {
+        'salty_qq_chat': '>=1.0.0',
+        'qq_api': '^1.2.0',
+        'online_player_api': '^1.0.0'
+    }
+}
+
+def on_load(server: PluginServerInterface, old):
+    global reply
+    sqc = server.get_plugin_instance("salty_qq_chat")
+    qqapi = server.get_plugin_instance("qq_api")
+
+    reply = sqc.reply
+
+    sqc.commands.add_command(re.compile(r'/你的命令 (.*)'), [str], handler)
+
+def handler(server: PluginServerInterface, event, command: List[str],
+            event_type):
+    message = command[0]
+    reply(
+        event,
+        f"[CQ:at,qq={event.user_id}] 你提供的参数是：\"{message}\""
+    )
 ```
-就可以添加命令了。稍迟些我会将代码放出来，直接改就可以用。
 
 # 特别鸣谢
 - [QQAPI](https://github.com/AnzhiZhang/MCDReforgedPlugins/tree/master/src/qq_api) - 提供正向 WebSocket 接入到 CQHttp 的接口
