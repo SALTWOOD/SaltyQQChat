@@ -11,7 +11,7 @@ class CommandBuilder:
     def handle(self, command: str) -> tuple[bool, Any | None]:
         func, params = self.get(command)
         if func is not None:
-            return (True, func(params))
+            return (True, func(*params))
         return (False, None)
     
     def _run(self, func: Callable, args: list[Any]) -> Any:
