@@ -7,9 +7,9 @@
 </div>
 
 # 简介
-这是一个使用 [QQAPI](https://github.com/AnzhiZhang/MCDReforgedPlugins/tree/master/src/qq_api) 的 QQ 机器人插件，可以说相当于重写了 [QQChat](https://github.com/AnzhiZhang/MCDReforgedPlugins/tree/master/src/qq_chat)，砍掉了很多个人认为没必要的功能，优化了代码结构。
+这是一个使用 [QQAPI](https://github.com/AnzhiZhang/MCDReforgedPlugins/tree/master/src/qq_api) 的 QQ 机器人插件，相当于是另一个 [QQChat](https://github.com/AnzhiZhang/MCDReforgedPlugins/tree/master/src/qq_chat)，砍掉了很多个人认为没必要的功能，优化了代码结构。
 
-同时，它还支持通过**API**的方式，简单地扩展机器人，添加属于你的命令！
+同时，它还支持通过 **API 调用**的方式，简单地扩展机器人，添加属于你的命令！
 
 目前相比 QQChat 新增功能：
 - [x] 支持通过 `/bot-ban` `/bot-pardon` 拒绝响应某用户

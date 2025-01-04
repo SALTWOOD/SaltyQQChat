@@ -3,44 +3,43 @@
 ![SaltyQQChat](https://socialify.git.ci/SALTWOOD/SaltyQQChat/image?description=1&font=Inter&forks=1&issues=1&language=1&name=1&owner=1&pattern=Plus&pulls=1&stargazers=1&theme=Auto)
 
 # SaltyQQChat
-✨🎉 **An extensible QQ bot plugin based on QQAPI!** 🎉✨
+✨🎉 **An Extensible QQ Bot Plugin Powered by QQAPI!** 🎉✨
 </div>
 
 # Introduction
-This is a QQ bot plugin based on [QQAPI](https://github.com/AnzhiZhang/MCDReforgedPlugins/tree/master/src/qq_api), which can be considered a rewrite of [QQChat](https://github.com/AnzhiZhang/MCDReforgedPlugins/tree/master/src/qq_chat), with many unnecessary features removed and the code structure optimized.
+This is a QQ bot plugin based on [QQAPI](https://github.com/AnzhiZhang/MCDReforgedPlugins/tree/master/src/qq_api), essentially a reworked version of [QQChat](https://github.com/AnzhiZhang/MCDReforgedPlugins/tree/master/src/qq_chat). It removes many features that I consider unnecessary and optimizes the code structure.
 
-At the same time, it supports extending the bot simply through the **API** to add your own commands!
+Additionally, it supports simple bot extension through **API calls**, allowing you to add your own custom commands!
 
-Compared to QQChat, the following new features have been added:
-- [x] Supports rejecting responses from certain users via `/bot-ban` and `/bot-pardon`
-- [x] Supports executing more native commands without using `/command` (such as `/ban`, `/pardon`)
-- [x] Supports starting and stopping the server through the bot
+**New features compared to QQChat include:**
+- [x] Supports ignoring commands from specific users via `/bot-ban` and `/bot-pardon`
+- [x] Allows the bot to execute more Minecraft native commands without using `/command` (such as `/ban`, `/pardon`)
+- [x] Allows starting and stopping the server through the bot
 - [x] Supports replying when the bot is mentioned, instead of just responding to a command
 - [x] Supports executing QQ bot commands within Minecraft
-- [x] Check the bot's status via `/ping` and `/info` commands
-- [x] **[Development Feature]** Reload the plugin remotely via `/reload`
+- [x] Check bot status via `/ping` and `/info` commands
+- [x] **[Development Feature]** Remote plugin reload via `/reload`
 - [x] Customizable one-way/two-way MC <==> QQ group forwarding
 - [x] Easily extendable command tree based on regular expressions
 
-Meanwhile, the following features have been removed or modified:
-- [x] No "management group", "main group", or "message sync group" functionality, replaced with multi-group synchronization (though usually only one group is used)
-- [x] No "MultiServer" feature, as it can lead to unpredictable bugs and has limited use
-- [x] Permission restrictions have been added to the `!!qq` command to prevent misuse, as CQ codes are not escaped, which could result in the bot account being used to send inappropriate content
-- [x] Added spacing between Chinese, numbers, and English, and a more humorous tone in the messages
+**Removed or modified features:**
+- [x] No "management group", "main group", or "message sync group" functionality. Instead, it uses multi-group synchronization (though typically, only one group is used)
+- [x] No "MultiServer" feature, as it leads to unpredictable bugs and has limited use
+- [x] Permissions are added to the `!!qq` command to prevent misuse, as CQ codes are not escaped, potentially allowing the bot account to send inappropriate content
+- [x] Spacing added between Chinese, numbers, and English, with a more humorous tone in the responses
 
 # Installation
 ## Install via MCDR
-In the MCDR console, use `!!MCDR plugin install salty_qq_chat`, then `!!MCDR confirm`.
+Use `!!MCDR plugin install salty_qq_chat` in the MCDR console, then `!!MCDR confirm`.
 
 ## Install via Release
-Download the corresponding `.mcdr` file from the [Releases page](https://github.com/SALTWOOD/SaltyQQChat/releases) and place it in the `plugins` folder, then reload.
+Download the corresponding `.mcdr` file from the [Releases page](https://github.com/SALTWOOD/SaltyQQChat/releases) and place it in the `plugins` folder, then reload the plugin.
 
 ## Install via Source Code
-Run `git clone https://github.com/SALTWOOD/SaltyQQChat` or `git clone git@github.com:SALTWOOD/SaltyQQChat` in the `plugins` directory, then reload the plugin.
+Run `git clone https://github.com/SALTWOOD/SaltyQQChat` or `git clone git@github.com:SALTWOOD/SaltyQQChat` in the `plugins` folder, then reload the plugin.
 
 # API
-This is one of the most interesting features of the plugin. You can add custom commands to the plugin by integrating other MCDR plugins.
-Here is an example of a single-file plugin:
+One of the most interesting features of this plugin is that you can extend it by adding custom commands via other MCDR plugins. Here's an example of a single-file plugin:
 
 ```Python
 from mcdreforged.api.types import PluginServerInterface
