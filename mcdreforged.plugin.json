@@ -1,0 +1,16 @@
+{
+  "id": "salty_qq_chat",
+  "version": "1.0.0",
+  "name": "SaltyQQChat",
+  "description": {
+    "en_us": "Useful Functions with QQ",
+    "zh_cn": "QQ 相关实用功能"
+  },
+  "author": [
+    "SALTWOOD"
+  ],
+  "dependencies": {
+    "qq_api": "^1.2.0",
+    "online_player_api": "^1.0.0"
+  }
+}
