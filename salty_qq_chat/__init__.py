@@ -145,7 +145,7 @@ def execute_qq_command(server: PluginServerInterface, event: MessageEvent, conte
             func(server, event, args, event_type)
 
 def check_command(event: MessageEvent | None, command: str) -> bool:
-    if command not in config: return False
+    if command not in config.commands: return False
     if config.commands[command] is False:
         if event is not None:
             reply(
