@@ -572,7 +572,7 @@ def qq_command_ping(server: PluginServerInterface, event: MessageEvent, command:
 def qq_command_bot_ban(server: PluginServerInterface, event: MessageEvent, command: List[str],
                        event_type: EventType):
     qq = command[0]
-    if qq in ban_list:
+    if qq in ban_list and event_type in ADMIN:
         ban_list.remove(qq)
         reply(
             event,
@@ -583,7 +583,7 @@ def qq_command_bot_ban(server: PluginServerInterface, event: MessageEvent, comma
 def qq_command_bot_pardon(server: PluginServerInterface, event: MessageEvent, command: List[str],
                           event_type: EventType):
     qq = command[0]
-    if qq not in ban_list:
+    if qq not in ban_list and event_type in ADMIN:
         ban_list.append(qq)
         reply(
             event,
@@ -592,7 +592,7 @@ def qq_command_bot_pardon(server: PluginServerInterface, event: MessageEvent, co
         save_data(server)
 
 def qq_command_ban(server: PluginServerInterface, event: MessageEvent, command: List[str],
-                          event_type: EventType): execute(server, event, f"ban {command[0]}")
+                          event_type: EventType): execute(server, event, f"ban {command[0]}") if event_type in ADMIN else None
 
 def qq_command_pardon(server: PluginServerInterface, event: MessageEvent, command: List[str],
-                          event_type: EventType): execute(server, event, f"pardon {command[0]}")
+                          event_type: EventType): execute(server, event, f"pardon {command[0]}") if event_type in ADMIN else None
