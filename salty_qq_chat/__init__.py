@@ -371,7 +371,7 @@ def on_notice(server: PluginServerInterface, bot: CQHttp,
     if not event.group_id in config.groups:
         return
 
-    if event.detail_type == "group_decrease" and config.whitelist_remove_with_leave:
+    if event.detail_type == "group_decrease" and config.whitelist["remove_when_leave_group"]:
         qq = str(event.user_id)
         if qq in bindings.keys():
             server.execute(config.whitelist["commands"]["remove"].format(bindings[qq]))
