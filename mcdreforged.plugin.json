@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "name": "SaltyQQChat",
   "description": {
-    "en_us": "Useful Functions with QQ",
-    "zh_cn": "QQ 相关实用功能"
+    "en_us": "",
+    "zh_cn": "Scalable QQ-Bot Built on QQAPI"
   },
   "author": [
     "SALTWOOD"

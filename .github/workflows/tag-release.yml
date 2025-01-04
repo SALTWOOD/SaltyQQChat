@@ -1,0 +1,53 @@
+name: "Build and Release SaltyQQChat"
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    name: "Build, Package and Release"
+    steps:
+      - name: "Checkout Code"
+        uses: actions/checkout@v4
+
+      - name: "Check Version from Tag"
+        id: check_version
+        run: |
+          # 获取当前推送的tag
+          TAG_VERSION = "${GITHUB_REF##*/}"
+          # 从 mcdreforged.plugin.json 中读取 version 字段
+          PLUGIN_VERSION=$(jq -r '.version' mcdreforged.plugin.json)
+          
+          echo "Tag version: $TAG_VERSION"
+          echo "Plugin version from mcdreforged.plugin.json: $PLUGIN_VERSION"
+          
+          # 比较 tag 和 plugin.json 中的版本
+          if [ "$TAG_VERSION" != "$PLUGIN_VERSION" ]; then
+            echo "Version mismatch: Tag version and meta.json version do not match."
+            exit 1
+          else
+            echo "Version match: Proceeding with the build."
+          fi
+
+      - name: "Build and Package the Plugin"
+        run: |
+          # 打包源代码为一个压缩包
+          mkdir -p dist
+          tar -czf dist/SaltyQQChat-${TAG_VERSION}.mcdr *  # 打包所有文件到压缩包
+
+      - name: "Upload Artifact"
+        uses: actions/upload-artifact@v4
+        with:
+          name: "SaltyQQChat-${TAG_VERSION}.mcdr"
+          path: dist/SaltyQQChat-${TAG_VERSION}.mcdr
+
+      - name: "Create GitHub Release"
+        uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          prerelease: ${{ contains(github.ref, 'pre') }}
+          files: |
+            dist/SaltyQQChat-${TAG_VERSION}.mcdr
