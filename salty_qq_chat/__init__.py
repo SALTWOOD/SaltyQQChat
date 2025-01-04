@@ -23,7 +23,7 @@ event_loop: AbstractEventLoop
 
 commands: CommandBuilder
 
-VERSION = (1, 1, 0)
+VERSION = (1, 1, 2)
 VERSION_STR = '.'.join(map(str, VERSION))
 
 class Config(Serializable):
@@ -58,6 +58,8 @@ class Config(Serializable):
         "qq_to_mc": True,
         "mc_to_qq": False,
     }
+    
+    need_at: bool = True
 
 config: Config
 ban_list: List[int]
@@ -121,6 +123,19 @@ class Help():
 """
 
 # 实用函数
+def extract_command(event):
+    # 获取 raw_message 中的艾特部分和指令
+    raw_message = event.raw_message
+    self_id = str(event.self_id)
+
+    # 检查是否艾特了机器人
+    if f"[CQ:at,qq={self_id}]" in raw_message:
+        match = re.search(r"\[CQ:at,qq=\d+\]\s*(.*)", raw_message)
+        if match:
+            content = match.group(1).strip()
+            return content
+    return None
+
 def execute_qq_command(server: PluginServerInterface, event: MessageEvent, content: str,
                        event_type: EventType):
     if content.startswith('/'):
@@ -319,17 +334,34 @@ def on_user_info(server: PluginServerInterface, info: Info):
 
 def on_message(server: PluginServerInterface, bot: CQHttp,
                event: MessageEvent):
-    if int(event.user_id) in ban_list:
-        return
+    content = event.content
+    event_type = parse_event_type(event)
+    
     # 普通信息
     if event.group_id in config.groups and config.forwardings["qq_to_mc"] is True:
         qq: str = str(event.user_id)
         name: str = f"§a<{bindings[qq]}>§7" if qq in bindings else f"§4<{event.sender['nickname']} ({qq})>§7"
         server.say(f"§7[QQ{f':{event.group_id}' if len(config.groups) > 1 else ''}] {name} {event.content if '[CQ:image' not in event.content else '<含有图片内容，已省略>'}")
+    
+    # 检查范围，范围外就不干了
     if (not event.group_id in config.groups) and (not str(event.user_id) in config.admins):
         return
-    event_type = parse_event_type(event)
-    execute_qq_command(server, event, event.content, event_type)
+
+    # 封禁列表，不作应答
+    if int(event.user_id) in ban_list:
+        return
+    
+    if config.need_at and event_type in GROUP:
+        extracted = extract_command(event)
+        server.logger.info(extracted)
+        if extracted is None:
+            return
+        content = extracted
+        if not content.startswith('/'): # 艾特就不要斜杠了，应答带斜杠的信息可能会被腾讯夹
+            content = f"/{content}"     # 比如，@Bot /help，这样的和官方的机器人很像，可能会被夹
+        else: return                    # 所以就选择不应答
+        
+    execute_qq_command(server, event, content, event_type)
 
 def on_notice(server: PluginServerInterface, bot: CQHttp,
               event: Event):
