@@ -268,9 +268,9 @@ def register_commands():
     commands.add_command("/ping", None, qq_command_ping)
     
     # /start /stop /restart 
-    commands.add_command("/start", None, lambda srv, evt, cmd, typ: srv.start() if evt in ADMIN else None)
-    commands.add_command("/stop", None, lambda srv, evt, cmd, typ: srv.stop() if evt in ADMIN else None)
-    commands.add_command("/restart", None, lambda srv, evt, cmd, typ: srv.restart() if evt in ADMIN else None)
+    commands.add_command("/start", None, lambda srv, evt, cmd, typ: srv.start() if typ in ADMIN else None)
+    commands.add_command("/stop", None, lambda srv, evt, cmd, typ: srv.stop() if typ in ADMIN else None)
+    commands.add_command("/restart", None, lambda srv, evt, cmd, typ: srv.restart() if typ in ADMIN else None)
     
     # /info
     commands.add_command("/info", None, qq_command_info)
