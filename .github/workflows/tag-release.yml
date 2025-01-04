@@ -13,36 +13,52 @@ jobs:
       - name: "Checkout Code"
         uses: actions/checkout@v4
 
-      - name: "Check Version from Tag"
+      - name: "Install Python"
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3 python3-pip git zip
+
+      - name: "Check Version from Tag and Files"
         id: check_version
         run: |
-          # 获取当前推送的tag
-          TAG_VERSION = "${GITHUB_REF##*/}"
-          # 从 mcdreforged.plugin.json 中读取 version 字段
+          TAG_VERSION="${GITHUB_REF##*/}"
+          TAG_VERSION="${TAG_VERSION#v}"
+
+          echo "Tag version: $TAG_VERSION"
+          
           PLUGIN_VERSION=$(jq -r '.version' mcdreforged.plugin.json)
           
-          echo "Tag version: $TAG_VERSION"
           echo "Plugin version from mcdreforged.plugin.json: $PLUGIN_VERSION"
+
+          PYTHON_VERSION=$(python -c "import importlib.util, sys; spec = importlib.util.spec_from_file_location('version', 'salty_qq_chat/version.py'); version = importlib.util.module_from_spec(spec); sys.modules['version'] = version; spec.loader.exec_module(version); print(version.VERSION_STR)")
+
+          echo "Python VERSION_STR: $PYTHON_VERSION"
           
-          # 比较 tag 和 plugin.json 中的版本
           if [ "$TAG_VERSION" != "$PLUGIN_VERSION" ]; then
-            echo "Version mismatch: Tag version and meta.json version do not match."
+            echo "Version mismatch: Tag version and plugin.json version do not match."
+            exit 1
+          elif [ "$TAG_VERSION" != "$PYTHON_VERSION" ]; then
+            echo "Version mismatch: Tag version and Python VERSION_STR do not match."
+            exit 1
+          elif [ "$PLUGIN_VERSION" != "$PYTHON_VERSION" ]; then
+            echo "Version mismatch: Plugin version and Python VERSION_STR do not match."
             exit 1
           else
             echo "Version match: Proceeding with the build."
           fi
 
+          echo "version=$TAG_VERSION" >> $GITHUB_OUTPUT
+
       - name: "Build and Package the Plugin"
         run: |
-          # 打包源代码为一个压缩包
-          mkdir -p dist
-          tar -czf dist/SaltyQQChat-${TAG_VERSION}.mcdr *  # 打包所有文件到压缩包
+          zip -r SaltyQQChat-${{ steps.check_version.outputs.version }}.zip *
+          mv SaltyQQChat-${{ steps.check_version.outputs.version }}.zip SaltyQQChat-${{ steps.check_version.outputs.version }}.mcdr
 
       - name: "Upload Artifact"
         uses: actions/upload-artifact@v4
         with:
-          name: "SaltyQQChat-${TAG_VERSION}.mcdr"
-          path: dist/SaltyQQChat-${TAG_VERSION}.mcdr
+          name: "SaltyQQChat-${{ steps.check_version.outputs.version }}.mcdr"
+          path: "SaltyQQChat-${{ steps.check_version.outputs.version }}.mcdr"
 
       - name: "Create GitHub Release"
         uses: "marvinpinto/action-automatic-releases@latest"
@@ -50,4 +66,4 @@ jobs:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           prerelease: ${{ contains(github.ref, 'pre') }}
           files: |
-            dist/SaltyQQChat-${TAG_VERSION}.mcdr
+            SaltyQQChat-${{ steps.check_version.outputs.version }}.mcdr

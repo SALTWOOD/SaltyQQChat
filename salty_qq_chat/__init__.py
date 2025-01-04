@@ -14,6 +14,7 @@ import requests
 import time
 from .command_builder import CommandBuilder
 from .info import get_system_info
+from .version import *
 
 # 变量声明
 bindings: dict[str, str]
@@ -22,9 +23,6 @@ bot: CQHttp
 event_loop: AbstractEventLoop
 
 commands: CommandBuilder
-
-VERSION = (1, 1, 2)
-VERSION_STR = '.'.join(map(str, VERSION))
 
 class Config(Serializable):
     groups: List[int] = []
