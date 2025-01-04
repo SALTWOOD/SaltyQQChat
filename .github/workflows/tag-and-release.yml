@@ -49,9 +49,25 @@ jobs:
 
           echo "version=$TAG_VERSION" >> $GITHUB_OUTPUT
 
+      - name: "Create Exclude List from .packignore"
+        id: exclude_list
+        run: |
+          # Check if .packignore exists and create an exclude list
+          if [ -f ".packignore" ]; then
+            # Read the .packignore file and format for zip exclusion
+            EXCLUDE_LIST=$(cat .packignore | sed 's|^|**/|' | sed 's|$|/*|' | tr '\n' ' ')
+            echo "Exclude list: $EXCLUDE_LIST"
+            echo "exclude_list=$EXCLUDE_LIST" >> $GITHUB_ENV
+          else
+            echo ".packignore not found, no files will be excluded."
+            echo "exclude_list=" >> $GITHUB_ENV
+          fi
+
       - name: "Build and Package the Plugin"
         run: |
-          zip -r SaltyQQChat-${{ steps.check_version.outputs.version }}.zip *
+          # Create the zip file excluding files listed in .packignore
+          zip -r SaltyQQChat-${{ steps.check_version.outputs.version }}.zip * \
+            -x ${{ steps.exclude_list.outputs.exclude_list }}
           mv SaltyQQChat-${{ steps.check_version.outputs.version }}.zip SaltyQQChat-${{ steps.check_version.outputs.version }}.mcdr
 
       - name: "Upload Artifact"
