@@ -31,7 +31,7 @@ class Config(Serializable):
     admins: List[str] = []
 
     whitelist: Dict[str, Any] = {
-        "add_when_bind": False,
+        "add_when_bind": True,
         "remove_when_leave_group": True,
         "commands": {
             "add": "whitelist add {}",
@@ -39,8 +39,6 @@ class Config(Serializable):
         },
         "verify_player": True,
     }
-
-    debug: bool = False
 
     commands: Dict[str, bool] = {
         "bind": True,
