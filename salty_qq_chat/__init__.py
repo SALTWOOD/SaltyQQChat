@@ -572,22 +572,22 @@ def qq_command_ping(server: PluginServerInterface, event: MessageEvent, command:
 def qq_command_bot_ban(server: PluginServerInterface, event: MessageEvent, command: List[str],
                        event_type: EventType):
     qq = command[0]
-    if qq in ban_list and event_type in ADMIN:
-        ban_list.remove(qq)
+    if qq not in ban_list and event_type in ADMIN:
+        ban_list.append(qq)
         reply(
             event,
-            f"[CQ:at,qq={event.user_id}] 成功解封 QQ: {qq}"
+            f"[CQ:at,qq={event.user_id}] 成功封禁 QQ: {qq}"
         )
         save_data(server)
 
 def qq_command_bot_pardon(server: PluginServerInterface, event: MessageEvent, command: List[str],
                           event_type: EventType):
     qq = command[0]
-    if qq not in ban_list and event_type in ADMIN:
-        ban_list.append(qq)
+    if qq in ban_list and event_type in ADMIN:
+        ban_list.remove(qq)
         reply(
             event,
-            f"[CQ:at,qq={event.user_id}] 成功封禁 QQ: {qq}"
+            f"[CQ:at,qq={event.user_id}] 成功解封 QQ: {qq}"
         )
         save_data(server)
 
