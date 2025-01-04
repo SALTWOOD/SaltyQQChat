@@ -47,6 +47,7 @@ class Config(Serializable):
     commands: Dict[str, bool] = {
         "bind": True,
         "command": True,
+        "info": True,
         "list": True,
         "mc": True,
         "mcdr": False,
@@ -144,6 +145,7 @@ def execute_qq_command(server: PluginServerInterface, event: MessageEvent, conte
             func(server, event, args, event_type)
 
 def check_command(event: MessageEvent | None, command: str) -> bool:
+    if command not in config: return False
     if config.commands[command] is False:
         if event is not None:
             reply(
@@ -576,7 +578,7 @@ def qq_command_command(server: PluginServerInterface, event: MessageEvent, comma
 
 def qq_command_info(server: PluginServerInterface, event: MessageEvent, command: List[str],
                     event_type: EventType):
-    if event_type in PRIVATE and event_type in ADMIN:
+    if event_type in PRIVATE and event_type in ADMIN and check_command(event, "info"):
         reply(
             event,
             get_system_info()
