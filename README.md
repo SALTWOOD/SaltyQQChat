@@ -55,9 +55,7 @@ PLUGIN_METADATA = {
     'author': 'NONE',
     'link': 'https://github.com',
     'dependencies': {
-        'salty_qq_chat': '>=1.0.0',
-        'qq_api': '^1.2.0',
-        'online_player_api': '^1.0.0'
+        'salty_qq_chat': '>=1.0.0'
     }
 }
 
