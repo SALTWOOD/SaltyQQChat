@@ -1,0 +1,69 @@
+name: "Build and Release SaltyQQChat"
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    name: "Build, Package and Release"
+    steps:
+      - name: "Checkout Code"
+        uses: actions/checkout@v4
+
+      - name: "Install Python"
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3 python3-pip git zip
+
+      - name: "Check Version from Tag and Files"
+        id: check_version
+        run: |
+          TAG_VERSION="${GITHUB_REF##*/}"
+          TAG_VERSION="${TAG_VERSION#v}"
+
+          echo "Tag version: $TAG_VERSION"
+          
+          PLUGIN_VERSION=$(jq -r '.version' mcdreforged.plugin.json)
+          
+          echo "Plugin version from mcdreforged.plugin.json: $PLUGIN_VERSION"
+
+          PYTHON_VERSION=$(python -c "import importlib.util, sys; spec = importlib.util.spec_from_file_location('version', 'salty_qq_chat/version.py'); version = importlib.util.module_from_spec(spec); sys.modules['version'] = version; spec.loader.exec_module(version); print(version.VERSION_STR)")
+
+          echo "Python VERSION_STR: $PYTHON_VERSION"
+          
+          if [ "$TAG_VERSION" != "$PLUGIN_VERSION" ]; then
+            echo "Version mismatch: Tag version and plugin.json version do not match."
+            exit 1
+          elif [ "$TAG_VERSION" != "$PYTHON_VERSION" ]; then
+            echo "Version mismatch: Tag version and Python VERSION_STR do not match."
+            exit 1
+          elif [ "$PLUGIN_VERSION" != "$PYTHON_VERSION" ]; then
+            echo "Version mismatch: Plugin version and Python VERSION_STR do not match."
+            exit 1
+          else
+            echo "Version match: Proceeding with the build."
+          fi
+
+          echo "version=$TAG_VERSION" >> $GITHUB_OUTPUT
+
+      - name: "Build and Package the Plugin"
+        run: |
+          zip -r SaltyQQChat-${{ steps.check_version.outputs.version }}.zip *
+          mv SaltyQQChat-${{ steps.check_version.outputs.version }}.zip SaltyQQChat-${{ steps.check_version.outputs.version }}.mcdr
+
+      - name: "Upload Artifact"
+        uses: actions/upload-artifact@v4
+        with:
+          name: "SaltyQQChat-${{ steps.check_version.outputs.version }}.mcdr"
+          path: "SaltyQQChat-${{ steps.check_version.outputs.version }}.mcdr"
+
+      - name: "Create GitHub Release"
+        uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          prerelease: ${{ contains(github.ref, 'pre') }}
+          files: |
+            SaltyQQChat-${{ steps.check_version.outputs.version }}.mcdr

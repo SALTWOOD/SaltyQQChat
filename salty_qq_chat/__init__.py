@@ -14,6 +14,7 @@ import requests
 import time
 from .command_builder import CommandBuilder
 from .info import get_system_info
+from .version import *
 
 # 变量声明
 bindings: dict[str, str]
@@ -22,9 +23,6 @@ bot: CQHttp
 event_loop: AbstractEventLoop
 
 commands: CommandBuilder
-
-VERSION = (1, 1, 2)
-VERSION_STR = '.'.join(map(str, VERSION))
 
 class Config(Serializable):
     groups: List[int] = []
@@ -398,7 +396,7 @@ def mc_command_command(src: CommandSource, ctx: CommandContext):
     player = src.player if src.is_player else "Console"
     if player not in bindings.values():
         src.reply("你还没有绑定，请先在 QQ 群内绑定一下~")
-    elif (not str(next((key for key, value in bindings.items() if value == player), 0)) in config.admins and not src.has_permission(2)) and (player != "Console"):
+    elif (not str(next((key for key, value in bindings.items() if value == player), 0)) in config.admins and not src.has_permission(4)) and (player != "Console"):
         src.reply("你莫得权限哦~")
         return
     
