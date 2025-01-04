@@ -82,26 +82,26 @@ class Help():
 - /mc <message> 向 Minecraft 内发送聊天信息
 - /ping 查询在线状态并且计算延迟"""
     
-    user = f"""SALTWO∅Dの自制伯特 Ver.{VERSION_STR}
+    user = f"""SaltyQQChat Ver.{VERSION_STR}
 
 {basic}
 """
 
-    admin = f"""SALTWO∅Dの自制伯特 Ver.{VERSION_STR}
+    admin = f"""SaltyQQChat Ver.{VERSION_STR}
 
 {basic}
 
 管理命令列表：
-- /bind 查看 /bind 命令详细帮助
+- /bind 玩家绑定信息相关操作，使用 /bind 获取详细帮助
 - /command 向 Minecraft 服务器发送命令
 - /mc <message> 向 Minecraft 内发送聊天信息
 - /mcdr <command> 向 MCDR 进程发送命令
-- /whitelist <add|remove> <玩家名> 管理白名单
+- /whitelist <add|remove> <玩家名> 管理白名单，使用 /whitelist 获取详细帮助
 - /start /stop /restart 启动、关闭、重启服务器
-- /info **仅私聊**，获取系统信息
+- /info 仅私聊，获取系统信息
 - /reload 重载 Bot
-- /ban 封禁服务器中的某人
-- /pardon 接触某人的服务器封禁
+- /ban 封禁某人（游戏内）
+- /pardon 解除对某人的封禁（游戏内）
 - /bot-ban 不允许某人使用 Bot
 - /bot-pardon 不再禁止某人使用 Bot
 """
@@ -413,9 +413,9 @@ def qq_command_list(server: PluginServerInterface, event: MessageEvent, *args):
 
     # generate message
     players_count = len(players)
-    message = f"服务器目前有 {players_count} 个玩家在线~\n"
+    message = f"服务器目前有 {players_count} 个玩家在线~"
     if players_count:
-        message += f"========== 玩家列表 ==========\n"
+        message += f"\n========== 玩家列表 ==========\n"
         for player in players:
             message += f"{player}\n"
 
