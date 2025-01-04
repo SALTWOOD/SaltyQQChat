@@ -23,7 +23,7 @@ event_loop: AbstractEventLoop
 
 commands: CommandBuilder
 
-VERSION = (1, 0, 9)
+VERSION = (1, 1, 0)
 VERSION_STR = '.'.join(map(str, VERSION))
 
 class Config(Serializable):
@@ -60,6 +60,7 @@ class Config(Serializable):
     }
 
 config: Config
+ban_list: List[int]
 
 class EventType(Enum):
     NONE = 0
@@ -98,6 +99,10 @@ class Help():
 - /start /stop /restart 启动、关闭、重启服务器
 - /info **仅私聊**，获取系统信息
 - /reload 重载 Bot
+- /ban 封禁服务器中的某人
+- /pardon 接触某人的服务器封禁
+- /bot-ban 不允许某人使用 Bot
+- /bot-pardon 不再禁止某人使用 Bot
 """
 
     bind = """/bind <ID> 绑定当前 QQ 号到 Minecraft 账号
@@ -149,6 +154,12 @@ def save_data(server: PluginServerInterface):
             "data": bindings,
         },
         "bindings.json"
+    )
+    server.save_config_simple(
+        {
+            "data": ban_list,
+        },
+        "ban_list.json"
     )
 
 def add_to_whitelist(server: PluginServerInterface, event: MessageEvent, player: str):
@@ -251,15 +262,28 @@ def register_commands():
     
     # /reload
     commands.add_command("/reload", None, qq_command_reload)
+    
+    # /ban /pardon
+    commands.add_command(re.compile(r'/ban (\d*)'), [int], qq_command_ban)
+    commands.add_command(re.compile(r'/pardon (\d*)'), [int], qq_command_pardon)
+    
+    # /bot-
+    commands.add_command(re.compile(r'/bot-ban (\d*)'), [int], qq_command_bot_ban)
+    commands.add_command(re.compile(r'/bot-pardon (\d*)'), [int], qq_command_bot_pardon)
 
 # MCDR 事件处理函数
 def on_load(server: PluginServerInterface, old):
-    global config, bindings, bot, event_loop
+    global config, bindings, ban_list, bot, event_loop
 
     config = server.load_config_simple(target_class=Config)
     bindings = server.load_config_simple(
         "bindings.json",
         default_config={"data": {}},
+        echo_in_console=False
+    )["data"]
+    ban_list = server.load_config_simple(
+        "ban_list.json",
+        default_config={"data": []},
         echo_in_console=False
     )["data"]
 
@@ -295,6 +319,8 @@ def on_user_info(server: PluginServerInterface, info: Info):
 
 def on_message(server: PluginServerInterface, bot: CQHttp,
                event: MessageEvent):
+    if int(event.user_id) in ban_list:
+        return
     # 普通信息
     if event.group_id in config.groups and config.forwardings["qq_to_mc"] is True:
         qq: str = str(event.user_id)
@@ -536,9 +562,37 @@ def qq_command_reload(server: PluginServerInterface, event: MessageEvent, comman
         server.reload_plugin("salty_qq_chat")
 
 def qq_command_ping(server: PluginServerInterface, event: MessageEvent, command: List[str],
-                      event_type: EventType):
+                    event_type: EventType):
     delay = (time.time() - event.time) * 1000
     reply(
         event,
         f"[CQ:at,qq={event.user_id}] Pong！服务在线，延迟 {delay:.2f}ms。"
     )
+
+def qq_command_bot_ban(server: PluginServerInterface, event: MessageEvent, command: List[str],
+                       event_type: EventType):
+    qq = command[0]
+    if qq in ban_list:
+        ban_list.remove(qq)
+        reply(
+            event,
+            f"[CQ:at,qq={event.user_id}] 成功解封 QQ: {qq}"
+        )
+        save_data(server)
+
+def qq_command_bot_pardon(server: PluginServerInterface, event: MessageEvent, command: List[str],
+                          event_type: EventType):
+    qq = command[0]
+    if qq not in ban_list:
+        ban_list.append(qq)
+        reply(
+            event,
+            f"[CQ:at,qq={event.user_id}] 成功封禁 QQ: {qq}"
+        )
+        save_data(server)
+
+def qq_command_ban(server: PluginServerInterface, event: MessageEvent, command: List[str],
+                          event_type: EventType): execute(server, event, f"ban {command[0]}")
+
+def qq_command_pardon(server: PluginServerInterface, event: MessageEvent, command: List[str],
+                          event_type: EventType): execute(server, event, f"pardon {command[0]}")
