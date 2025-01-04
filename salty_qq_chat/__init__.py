@@ -355,7 +355,6 @@ def on_message(server: PluginServerInterface, bot: CQHttp,
     
     if config.need_at and event_type in GROUP:
         extracted = extract_command(event)
-        server.logger.info(extracted)
         if extracted is None:
             return
         content = extracted
