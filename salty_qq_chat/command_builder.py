@@ -5,8 +5,17 @@ class CommandBuilder:
     def __init__(self):
         self.commands: list[tuple[re.Pattern | str, list[type] | None, Callable]] = []
 
-    def add_command(self, regex: re.Pattern | str, types: list[type] | None, func: Callable) -> None:
-        self.commands.append((regex, types, func))
+    def add_command(self, regex: re.Pattern | str, types: list[type] | None, func: Callable) -> bool:
+        if not len([e for e in self.commands if e[0] == regex]):
+            self.commands.append((regex, types, func))
+            return True
+        return False
+    
+    def remove_command(self, regex: re.Pattern | str) -> bool:
+        commands = [c for c in self.commands if c[0] != regex]
+        result = commands == self.commands
+        self.commands = commands
+        return result
 
     def handle(self, command: str) -> tuple[bool, Any | None]:
         func, params = self.get(command)
@@ -86,12 +95,15 @@ class CommandBuilder:
         return result
     
 if __name__ == '__main__':
+    import sys
+    
     builder = CommandBuilder()
     builder.add_command(re.compile(r'echo (.*)'), [str], lambda s: print(s))
     builder.add_command(re.compile(r'add (.*) (.*)'), [int, int], lambda a, b: int(a) + int(b))
     builder.add_command(re.compile(r'sub (.*) (.*)'), [int, int], lambda a, b: int(a) - int(b))
     builder.add_command(re.compile(r'mul (.*) (.*)'), [int, int], lambda a, b: int(a) * int(b))
     builder.add_command(re.compile(r'div (.*) (.*)'), [int, int], lambda a, b: int(a) / int(b))
+    builder.add_command("exit", None, lambda: sys.exit())
     
     while True:
         command = input('> ')
