@@ -525,9 +525,9 @@ def qq_command_bind_query(server: PluginServerInterface, event: MessageEvent, co
             case "ID":
                 result = None
                 if value in bindings.values():
-                    result = [k for k, v in bindings if v == value]
+                    result = [k for k, v in bindings.items() if v == value]
 
-                if isinstance(result, List[str]):
+                if result is not None:
                     reply(
                         event,
                         f"[CQ:at,qq={event.user_id}] 查询到如下结果：\n{'\n'.join(map(str, [f'QQ: {key} 绑定的是 \"{value}\"' for key in result]))}"
