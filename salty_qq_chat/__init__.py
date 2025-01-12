@@ -152,7 +152,7 @@ def check_command(event: MessageEvent | None, command: str) -> bool:
         if event is not None:
             reply(
                 event,
-                f"[CQ:at,qq={event.user_id}] 未开启 \"{command}\" 命令！"
+                f"未开启 \"{command}\" 命令！"
             )
         return False
     return True
@@ -185,14 +185,14 @@ def add_to_whitelist(server: PluginServerInterface, event: MessageEvent, player:
     server.execute(config.whitelist["commands"]["add"].format(player))
     reply(
         event,
-        f"[CQ:at,qq={event.user_id}] 把 \"{player}\" 添加到服务器白名单里头去了~"
+        f"把 \"{player}\" 添加到服务器白名单里头去了~"
     )
 
 def remove_from_whitelist(server: PluginServerInterface, event: MessageEvent, player: str):
     server.execute(config.whitelist["commands"]["remove"].format(player))
     reply(
         event,
-        f"[CQ:at,qq={event.user_id}] 把 \"{player}\" 从服务器白名单里头删掉了~"
+        f"把 \"{player}\" 从服务器白名单里头删掉了~"
     )
 
 def send_to_groups(msg: str):
@@ -201,9 +201,9 @@ def send_to_groups(msg: str):
             bot.send_group_msg(group_id=i, message=msg)
         )
 
-def reply(event: Event | CommandSource, message: str):
+def reply(event: Event | CommandSource, message: str, at_sender: bool = True):
     if isinstance(event, Event):
-        event_loop.create_task(bot.send(event, message))
+        event_loop.create_task(bot.send(event, message, at_sender=at_sender))
     elif isinstance(event, CommandSource):
         event.reply(message)
 
@@ -487,7 +487,7 @@ def qq_command_bind_user(server: PluginServerInterface, event: MessageEvent, com
             if not response.ok:
                 reply(
                     event,
-                    f"[CQ:at,qq={event.user_id}] 没办法获取玩家 \"{player}\" 的资料信息，你是不是输入了一个离线玩家名或者不存在的玩家名？\n详细错误信息：{response.json().get('errorMessage')}"
+                    f"没办法获取玩家 \"{player}\" 的资料信息，你是不是输入了一个离线玩家名或者不存在的玩家名？\n详细错误信息：{response.json().get('errorMessage')}"
                 )
                 return
 
@@ -495,14 +495,14 @@ def qq_command_bind_user(server: PluginServerInterface, event: MessageEvent, com
             value = bindings[qq]
             reply(
                 event,
-                f"[CQ:at,qq={event.user_id}] 你已经绑定了 \"{value}\"，请找管理员修改！"
+                f"你已经绑定了 \"{value}\"，请找管理员修改！"
             )
             return
         else:
             bindings[qq] = player
             reply(
                 event,
-                f"[CQ:at,qq={event.user_id}] 成功绑定到 \"{player}\""
+                f"成功绑定到 \"{player}\""
             )
             save_data(server)
             if config.whitelist["add_when_bind"] is True:
@@ -520,7 +520,7 @@ def qq_command_bind_admin(server: PluginServerInterface, event: MessageEvent, co
         bindings[qq] = player
         reply(
             event,
-            f"[CQ:at,qq={event.user_id}] 成功将 QQ: {qq} 绑定到 \"{player}\""
+            f"成功将 QQ: {qq} 绑定到 \"{player}\""
         )
         save_data(server)
         if config.whitelist["add_when_bind"] is True:
@@ -537,7 +537,7 @@ def qq_command_bind_unbind(server: PluginServerInterface, event: MessageEvent, c
             save_data(server)
             reply(
                 event,
-                f"[CQ:at,qq={event.user_id}] 成功解除 QQ: {qq} 对 \"{player}\" 的绑定！"
+                f"成功解除 QQ: {qq} 对 \"{player}\" 的绑定！"
             )
             if config.whitelist["add_when_bind"] is True:
                 remove_from_whitelist(server, event, player)
@@ -557,12 +557,12 @@ def qq_command_bind_query(server: PluginServerInterface, event: MessageEvent, co
                 if result is not None:
                     reply(
                         event,
-                        f"[CQ:at,qq={event.user_id}] 查询到如下结果：\nQQ: {value} 绑定的是 \"{result}\""
+                        f"查询到如下结果：\nQQ: {value} 绑定的是 \"{result}\""
                     )
                 else:
                     reply(
                         event,
-                        f"[CQ:at,qq={event.user_id}] 没有查询到结果！"
+                        f"没有查询到结果！"
                     )
             case "ID":
                 result = None
@@ -572,12 +572,12 @@ def qq_command_bind_query(server: PluginServerInterface, event: MessageEvent, co
                 if result is not None:
                     reply(
                         event,
-                        f"[CQ:at,qq={event.user_id}] 查询到如下结果：\n{'\n'.join(map(str, [f'QQ: {key} 绑定的是 \"{value}\"' for key in result]))}"
+                        f"查询到如下结果：\n{'\n'.join(map(str, [f'QQ: {key} 绑定的是 \"{value}\"' for key in result]))}"
                     )
                 else:
                     reply(
                         event,
-                        f"[CQ:at,qq={event.user_id}] 没有查询到结果！"
+                        f"没有查询到结果！"
                     )
             case _:
                 ...
@@ -603,7 +603,7 @@ def qq_command_mcdr(server: PluginServerInterface, event: MessageEvent, command:
         server.execute_command(cmd)
         reply(
             event,
-            f"[CQ:at,qq={event.user_id}] 已执行 MCDR 命令！"
+            f"已执行 MCDR 命令！"
         )
 
 def qq_command_command(server: PluginServerInterface, event: MessageEvent, command: List[str],
@@ -627,7 +627,7 @@ def qq_command_reload(server: PluginServerInterface, event: MessageEvent, comman
     if event_type in ADMIN:
         reply(
             event,
-            f"[CQ:at,qq={event.user_id}] 收到，在 5 秒后重载……"
+            f"收到，在 5 秒后重载……"
         )
         time.sleep(5)
         server.reload_plugin("salty_qq_chat")
@@ -637,7 +637,7 @@ def qq_command_ping(server: PluginServerInterface, event: MessageEvent, command:
     delay = (time.time() - event.time) * 1000
     reply(
         event,
-        f"[CQ:at,qq={event.user_id}] Pong！服务在线，延迟 {delay:.2f}ms。"
+        f"Pong！服务在线，延迟 {delay:.2f}ms。"
     )
 
 def qq_command_bot_ban(server: PluginServerInterface, event: MessageEvent, command: List[str],
@@ -647,7 +647,7 @@ def qq_command_bot_ban(server: PluginServerInterface, event: MessageEvent, comma
         ban_list.append(qq)
         reply(
             event,
-            f"[CQ:at,qq={event.user_id}] 成功封禁 QQ: {qq}"
+            f"成功封禁 QQ: {qq}"
         )
         save_data(server)
 
@@ -658,7 +658,7 @@ def qq_command_bot_pardon(server: PluginServerInterface, event: MessageEvent, co
         ban_list.remove(qq)
         reply(
             event,
-            f"[CQ:at,qq={event.user_id}] 成功解封 QQ: {qq}"
+            f"成功解封 QQ: {qq}"
         )
         save_data(server)
 
