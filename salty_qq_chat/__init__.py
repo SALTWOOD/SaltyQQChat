@@ -27,7 +27,6 @@ commands: CommandBuilder
 
 class Config(Serializable):
     groups: List[int] = []
-    treat_qq_admin_as_bot_admin: bool = True
 
     admins: List[str] = []
 
