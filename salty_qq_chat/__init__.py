@@ -8,6 +8,7 @@ from mcdreforged.api.command import *
 from mcdreforged.api.utils import Serializable
 from mcdreforged.api.types import PluginServerInterface, CommandSource, Info
 from mcdreforged.api.decorator import new_thread
+from mcdreforged.api.event import LiteralEvent
 from enum import Enum, unique
 
 import requests
@@ -38,6 +39,12 @@ class Config(Serializable):
             "remove": "whitelist remove {}"
         },
         "verify_player": True,
+    }
+    
+    qq: Dict[str, Any] = {
+        "approve_group_add": False,
+        "approve_group_invite": True,
+        "approve_friend_request": True,
     }
 
     commands: Dict[str, bool] = {
@@ -200,6 +207,9 @@ def reply(event: Event | CommandSource, message: str):
         event_loop.create_task(bot.send(event, message))
     elif isinstance(event, CommandSource):
         event.reply(message)
+
+def action(type: str, **kwargs):
+    event_loop.create_task(bot.call_action(type, **kwargs))
         
 
 def parse_event_type(event: MessageEvent) -> EventType:
@@ -316,6 +326,7 @@ def on_load(server: PluginServerInterface, old):
     )
     server.register_event_listener("qq_api.on_message", on_message)
     server.register_event_listener("qq_api.on_notice", on_notice)
+    server.register_event_listener("qq_api.on_request", on_request)
 
     register_commands()
 
@@ -376,6 +387,38 @@ def on_notice(server: PluginServerInterface, bot: CQHttp,
             )
             del bindings[qq]
             save_data(server)
+
+def on_request(server: PluginServerInterface, bot: CQHttp,
+               event: Event):
+    match event.request_type:
+        case "friend":
+            qq = str(event.user_id)
+            if config.qq["approve_friend_request"] is True:
+                action("set_friend_add_request", flag=event.flag, approve=(qq in config.admins))
+        case "group":
+            if int(event.group_id) not in config.groups:
+                return
+            match event.sub_type:
+                case "invite":
+                    qq = str(event.user_id)
+                    if qq in config.admins and config.qq["approve_group_invite"] is True:
+                        action("set_group_add_request", flag=event.flag, sub_type="invite", approve=True)
+                case "add":
+                    match config.qq["approve_group_add"]:
+                        case True:
+                            action("set_group_add_request", flag=event.flag, sub_type="add", approve=True)
+                        case False:
+                            action(
+                                "set_group_add_request",
+                                flag=event.flag,
+                                sub_type="add",
+                                approve=False,
+                                reason="管理员禁止加群"
+                            )
+                        case _:
+                            ... # 不作处理
+            
+        
 
 # MC 命令处理器
 def mc_command_qq(src: CommandSource, ctx: CommandContext):
