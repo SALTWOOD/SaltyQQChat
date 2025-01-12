@@ -81,8 +81,4 @@ def handler(server: PluginServerInterface, event, command: List[str],
 
 # Special Thanks
 - [QQAPI](https://github.com/AnzhiZhang/MCDReforgedPlugins/tree/master/src/qq_api) - Provides a WebSocket interface to CQHttp
-- [AnzhiZhang](https://github.com/AnzhiZhang) - Special thanks for providing LGPL license, although I used GPL (lol)
 - **SALTWO∅D server members** - For helping me test the bot and discovering security vulnerabilities before the release
-
-# Random Thoughts
-- This project is not just a direct copy of QQChat. It's just that the only available API that fits my environment is QQAPI, and QQChat is the only downstream implementation of this API, so some parts inevitably resemble it.

@@ -81,8 +81,4 @@ def handler(server: PluginServerInterface, event, command: List[str],
 
 # 特别鸣谢
 - [QQAPI](https://github.com/AnzhiZhang/MCDReforgedPlugins/tree/master/src/qq_api) - 提供正向 WebSocket 接入到 CQHttp 的接口
-- [AnzhiZhang](https://github.com/AnzhiZhang) - 特例为我提供 LGPL 协议授权，但是我还是用了 GPL（
 - **SALTWO∅D 服务器的各位** - 帮我测试机器人，还赶在发布 Release 之前帮我发现了越权漏洞（
-
-# 碎碎念
-- 其实这个项目也不是照抄 QQChat 的啦，只是因为能找到适合我的环境的现成的 API 只有 QQAPI 一个，又只有一个 QQChat 是这个 API 的下游使用，所以有些部分比较像是无法避免的（）
