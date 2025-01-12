@@ -21,6 +21,8 @@ Additionally, it supports simple bot extension through **API calls**, allowing y
 - [x] **[Development Feature]** Remote plugin reload via `/reload`
 - [x] Customizable one-way/two-way MC <==> QQ group forwarding
 - [x] Easily extendable command tree based on regular expressions
+- [x] Automatically handle group join requests, friend requests, and group invitations.
+- [x] Verify if the Minecraft player exists when binding to a player.
 
 **Removed or modified features:**
 - [x] No "management group", "main group", or "message sync group" functionality. Instead, it uses multi-group synchronization (though typically, only one group is used)
