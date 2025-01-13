@@ -41,7 +41,7 @@ class Config(Serializable):
     }
     
     qq: Dict[str, Any] = {
-        "approve_group_add": False,
+        "approve_group_add": None,
         "approve_group_invite": True,
         "approve_friend_request": True,
     }
