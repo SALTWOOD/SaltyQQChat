@@ -6,6 +6,11 @@
 ✨🎉 **An Extensible QQ Bot Plugin Powered by QQAPI!** 🎉✨
 </div>
 
+> [!WARNING]  
+> Due to the f**king Tencent, the development of this plugin is temporarily suspended. The new version will be released as a web-based bot.  
+> All new features will be updated, but no availability is promised for any feature.  
+> If you decide to use it, testing is on you.
+
 # Introduction
 This is a QQ bot plugin based on [QQAPI](https://github.com/AnzhiZhang/MCDReforgedPlugins/tree/master/src/qq_api), essentially a reworked version of [QQChat](https://github.com/AnzhiZhang/MCDReforgedPlugins/tree/master/src/qq_chat). It removes many features that I consider unnecessary and optimizes the code structure.
 

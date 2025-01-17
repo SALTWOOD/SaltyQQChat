@@ -6,6 +6,11 @@
 ✨🎉 **基于 QQAPI 的、可拓展的 QQ 机器人插件！** 🎉✨
 </div>
 
+> [!WARNING]
+> 因为有点大病的腾讯，此插件暂缓开发，新款插件将采用网页端机器人的形式。
+> 所有新功能都将会更新，但不保证任何功能的可用性。
+> 您要用就您自己测试吧.png
+
 # 简介
 这是一个使用 [QQAPI](https://github.com/AnzhiZhang/MCDReforgedPlugins/tree/master/src/qq_api) 的 QQ 机器人插件，相当于是另一个 [QQChat](https://github.com/AnzhiZhang/MCDReforgedPlugins/tree/master/src/qq_chat)，砍掉了很多个人认为没必要的功能，优化了代码结构。
 
