@@ -123,11 +123,11 @@ def get_id(event: Update) -> int:
     if event.message.from_user is None: raise Exception("event.message.from_user is none")
     return event.message.from_user.id
 
-def execute_bot_command(server: PluginServerInterface, event: Update, content: str, type: MessageType):
+def execute_bot_command(server: PluginServerInterface, event: Update, context: CommandContext | ContextTypes.DEFAULT_TYPE, content: str, type: MessageType):
     if content.startswith('/'):
         func, args = commands.get(content)
         if func is not None:
-            func(server, event, content, args, type)
+            func(server, event, context, args, type)
 
 def check_command(event: Update | None, context: ContextTypes.DEFAULT_TYPE | CommandContext, command: str) -> bool:
     if command not in config.commands: return False
@@ -282,15 +282,17 @@ def on_load(server: PluginServerInterface, old):
     register_commands()
     
     bot = TelegramBot(config.telegram["token"]) if config.telegram["api"] is None else TelegramBot(config.telegram["token"], config.telegram["api"])
+    bot.actions.append(lambda evt, ctx: on_message(server, evt, ctx))
 
     if old is not None and old.VERSION < VERSION:
         tip: str = f"SALTWO∅Dの自制伯特已从 ver.{old.VERSION_STR} 更新到 ver.{VERSION_STR}"
         # send_to_groups(tip)
         server.say(f"§7{tip}")
 
-def on_message(server: PluginServerInterface, event: Update):
+def on_message(server: PluginServerInterface, event: Update, context: ContextTypes.DEFAULT_TYPE):
     if event.message is None: return
     content = event.message.text
+    if content is None: return
     event_type = parse_event_type(event)
     
     # 普通信息
@@ -303,7 +305,7 @@ def on_message(server: PluginServerInterface, event: Update):
     if get_id(event) in ban_list:
         return
         
-    execute_bot_command(server, event, content, event_type)
+    execute_bot_command(server, event, context, content, event_type)
 
 # MC 命令处理器
 # def mc_command_tg(src: CommandSource, ctx: CommandContext):
@@ -329,7 +331,7 @@ def mc_command_command(src: CommandSource, ctx: CommandContext):
     server = src.get_server()
     command = ctx["command"]
     command = command if command.startswith('/') else f"/{command}"
-    execute_bot_command(server, src, command)
+    execute_bot_command(server, src, ctx, command, MessageType.ADMIN)
 
 # QQ 命令处理器
 def tg_command_list(server: PluginServerInterface, event: Update, context: ContextTypes.DEFAULT_TYPE, *args):
