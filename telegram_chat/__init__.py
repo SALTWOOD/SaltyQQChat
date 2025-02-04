@@ -282,7 +282,7 @@ def on_load(server: PluginServerInterface, old):
     register_commands()
     
     bot = TelegramBot(config.telegram["token"]) if config.telegram["api"] is None else TelegramBot(config.telegram["token"], config.telegram["api"])
-    bot.actions.append(lambda evt, ctx: on_message(server, evt, ctx))
+    bot.action = lambda evt, ctx: on_message(server, evt, ctx)
 
     if old is not None and old.VERSION < VERSION:
         tip: str = f"SALTWO∅Dの自制伯特已从 ver.{old.VERSION_STR} 更新到 ver.{VERSION_STR}"
