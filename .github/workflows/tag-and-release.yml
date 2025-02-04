@@ -30,7 +30,7 @@ jobs:
           
           echo "Plugin version from mcdreforged.plugin.json: $PLUGIN_VERSION"
 
-          PYTHON_VERSION=$(python -c "import importlib.util, sys; spec = importlib.util.spec_from_file_location('version', 'salty_qq_chat/version.py'); version = importlib.util.module_from_spec(spec); sys.modules['version'] = version; spec.loader.exec_module(version); print(version.VERSION_STR)")
+          PYTHON_VERSION=$(python -c "import importlib.util, sys; spec = importlib.util.spec_from_file_location('version', 'telegram_chat/version.py'); version = importlib.util.module_from_spec(spec); sys.modules['version'] = version; spec.loader.exec_module(version); print(version.VERSION_STR)")
 
           echo "Python VERSION_STR: $PYTHON_VERSION"
           

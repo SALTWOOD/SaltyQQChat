@@ -26,7 +26,7 @@ class CommandBuilder:
     def _run(self, func: Callable, args: list[Any]) -> Any:
         return func(*args)
 
-    def __call__(self, command: str) -> Callable | None:
+    def __call__(self, command: str) -> Any | None:
         return self.handle(command)
     
     def get(self, command: str) -> tuple[Callable | None, Any | None]:

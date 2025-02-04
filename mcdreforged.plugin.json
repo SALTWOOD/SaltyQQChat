@@ -1,16 +1,15 @@
 {
-  "id": "salty_qq_chat",
-  "version": "1.1.8",
-  "name": "SaltyQQChat",
+  "id": "telegram_chat",
+  "version": "2.0.0",
+  "name": "TelegramChat",
   "description": {
-    "en_us": "Scalable QQ-Bot Built on QQAPI",
-    "zh_cn": "一个基于 QQAPI 的可扩展的 QQ 机器人"
+    "en_us": "Scalable Telegram-Bot.",
+    "zh_cn": "一个可扩展的 TG 机器人"
   },
   "author": [
     "SALTWOOD"
   ],
   "dependencies": {
-    "qq_api": "^1.2.0",
     "online_player_api": "^1.0.0",
     "python": ">=3.10"
   }
