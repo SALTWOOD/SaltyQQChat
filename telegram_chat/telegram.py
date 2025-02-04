@@ -13,20 +13,15 @@ class TelegramBot:
         level=logging.INFO
     )
 
-    @staticmethod
-    async def unknown(update: Update, context: ContextTypes.DEFAULT_TYPE):
-        if update.effective_chat is None: return
-        await context.bot.send_message(chat_id=update.effective_chat.id, text="命令不存在。")
-
     async def match(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         for i in self.actions:
             i(update, context)
 
-    def __init__(self, token: str, api: str = "https://api/telegram.org/bot"):
+    def __init__(self, token: str, api: str = "https://api.telegram.org/bot"):
         self.application = ApplicationBuilder().base_url(api).token(token).build()
 
-        unknown_handler = MessageHandler(filters.COMMAND, self.match)
-        self.application.add_handler(unknown_handler)
+        normal_handler = MessageHandler(filters.COMMAND, self.match)
+        self.application.add_handler(normal_handler)
     
     def run(self):
         self.application.run_polling()
