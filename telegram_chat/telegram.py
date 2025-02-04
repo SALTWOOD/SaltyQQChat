@@ -22,6 +22,7 @@ class TelegramBot:
 
         normal_handler = MessageHandler(filters.COMMAND, self.match)
         self.application.add_handler(normal_handler)
+        self.actions = []
     
     def run(self):
         self.application.run_polling()
