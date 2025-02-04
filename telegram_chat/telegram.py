@@ -2,7 +2,7 @@ import logging
 from telegram import Update
 from telegram.ext import Application, ApplicationBuilder, ContextTypes, CommandHandler, MessageHandler, filters
 from typing import Callable
-import datetime
+import asyncio
 
 class TelegramBot:
     application: Application
@@ -22,4 +22,6 @@ class TelegramBot:
         self.actions = []
     
     def run(self):
-        self.application.run_polling()
+        new_loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(new_loop)
+        _ = self.application.run_polling()
