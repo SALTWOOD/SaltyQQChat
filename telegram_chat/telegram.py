@@ -10,7 +10,8 @@ class TelegramBot:
     
     logging.basicConfig(
         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-        level=logging.INFO
+        level=logging.INFO,
+        stream=open("logs/telegram.log", "w")
     )
 
     async def match(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
