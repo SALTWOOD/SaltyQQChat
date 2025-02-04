@@ -254,7 +254,10 @@ def register_commands():
 
 # MCDR 事件处理函数
 def on_load(server: PluginServerInterface, old):
-    global config, bindings, ban_list, bot, extbot, application
+    global config, bindings, ban_list, bot
+    
+    if old is not None:
+        old.bot.application.stop()
 
     config = server.load_config_simple(target_class=Config)
     bindings = server.load_config_simple(
