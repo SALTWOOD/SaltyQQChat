@@ -2,7 +2,7 @@ import logging
 from telegram import Update
 from telegram.ext import Application, ApplicationBuilder, ContextTypes, CommandHandler, MessageHandler, filters
 from typing import Callable
-import json
+import datetime
 
 class TelegramBot:
     application: Application
@@ -10,7 +10,8 @@ class TelegramBot:
     
     logging.basicConfig(
         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-        level=logging.INFO
+        level=logging.INFO,
+        stream=open(f"logs/telegram.log", "w")
     )
 
     def __init__(self, token: str, api: str = "https://api.telegram.org/bot"):
